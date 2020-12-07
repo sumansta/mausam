@@ -3,25 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:weather_icons/weather_icons.dart';
 
-class WeatherData extends StatefulWidget {
-  WeatherData({this.wind});
+class WeatherData extends StatelessWidget {
+  const WeatherData({Key key, this.weatherData}) : super(key: key);
 
-  int high;
-  int wind;
-  int humidity;
-  int visibility;
-
-  @override
-  State<StatefulWidget> createState() => _WeatherDataState();
-}
-
-class _WeatherDataState extends State<WeatherData> {
-  var wind;
-  @override
-  void initState() {
-    super.initState();
-    wind = widget.wind;
-  }
+  final weatherData;
 
   @override
   Widget build(BuildContext context) {
@@ -30,22 +15,23 @@ class _WeatherDataState extends State<WeatherData> {
         DataComponent(
           icon: WeatherIcons.thermometer_exterior,
           label: 'High/Low',
-          value: '10',
+          value:
+              '${weatherData['main']['temp_max']}/${weatherData['main']['temp_min']}',
         ),
         DataComponent(
           icon: WeatherIcons.strong_wind,
           label: 'Wind',
-          value: '$wind kph',
+          value: '${weatherData['wind']['speed']} kph',
         ),
         DataComponent(
           icon: WeatherIcons.humidity,
           label: 'Humidity',
-          value: '86%',
+          value: '${weatherData['main']['humidity']}%',
         ),
         DataComponent(
           icon: WeatherIcons.alien,
           label: 'Visibility',
-          value: '10 km',
+          value: '${weatherData['visibility']} m',
         ),
       ],
     );

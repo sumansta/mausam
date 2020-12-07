@@ -5,6 +5,7 @@ import 'package:mausam/components/weather_data.dart';
 import 'package:mausam/services/weather.dart';
 import 'package:weather_icons/weather_icons.dart';
 import 'package:intl/intl.dart';
+import 'package:geolocator/geolocator.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -16,28 +17,39 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   WeatherModel weatherModel = WeatherModel();
   var weatherData;
+  bool _onLoading = false;
   int temperature = 25;
-  String cityName = 'Kathmandu';
-  String currentDate = '31 Mar, 2020';
+  String cityName, currentDate;
+  Position _currentPosition;
 
   @override
   void initState() {
     super.initState();
-
     getCityWeather();
   }
 
   void getCityWeather() async {
-    weatherData = await WeatherModel().getCityWeather();
-    DateTime now = DateTime.now();
     setState(() {
+      _onLoading = true;
+    });
+    await _getCurrentLocation();
+    weatherData = await WeatherModel().getCityWeather(_currentPosition);
+    DateTime now = DateTime.now();
+
+    setState(() {
+      _onLoading = false;
       weatherData = weatherData;
       currentDate = DateFormat('yyyy-MM-dd').format(now);
     });
-    if (weatherData != null) {
-      temperature = weatherData['main']['temp'];
-      cityName = weatherData['name'];
-    }
+  }
+
+  _getCurrentLocation() async {
+    final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    setState(() {
+      _currentPosition = position;
+    });
+    return;
   }
 
   @override
@@ -60,59 +72,94 @@ class _HomePageState extends State<HomePage> {
             padding: EdgeInsets.only(
               top: 36.0,
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    Icon(
-                      WeatherIcons.night_alt_cloudy,
-                      size: 80.0,
-                    ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    Text(
-                      '$temperature°',
-                      style: GoogleFonts.fredokaOne(
-                        textStyle: TextStyle(fontSize: 86.0),
-                      ),
-                    ),
-                    Text(
-                      '$cityName',
-                      style: GoogleFonts.fredokaOne(
-                        textStyle: TextStyle(fontSize: 48.0),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 10.0),
-                      child: Text(
-                        '$currentDate',
-                        style: GoogleFonts.fredokaOne(
-                          textStyle: TextStyle(fontSize: 24.0),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                WeatherData(
-                  wind: 13,
-                ),
-                TodayData(),
-                SizedBox(
-                  height: 10.0,
-                ),
-                // FlatButton(
-                //   onPressed: () {
-                //     this.getCityWeather();
-                //   },
-                //   child: Text('Refresh'),
-                // ),
-              ],
-            ),
+            child: _onLoading ? LoadingView() : buildWeatherView(),
           ),
         ),
+      ),
+    );
+  }
+
+  Column buildWeatherView() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Column(
+          children: <Widget>[
+            Icon(
+              WeatherIcons.thunderstorm,
+              size: 80.0,
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
+            Text(
+              '${weatherData['main']['temp']}°',
+              style: GoogleFonts.fredokaOne(
+                textStyle: TextStyle(fontSize: 86.0),
+              ),
+            ),
+            Text(
+              '${weatherData['name']}',
+              style: GoogleFonts.fredokaOne(
+                textStyle: TextStyle(fontSize: 48.0),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 10.0),
+              child: Text(
+                '$currentDate',
+                style: GoogleFonts.fredokaOne(
+                  textStyle: TextStyle(fontSize: 24.0),
+                ),
+              ),
+            ),
+          ],
+        ),
+        WeatherData(
+          weatherData: weatherData,
+        ),
+        TodayData(),
+        SizedBox(
+          height: 10.0,
+        ),
+        FlatButton(
+          onPressed: () {
+            this.getCityWeather();
+          },
+          child: Text('Refresh'),
+        ),
+      ],
+    );
+  }
+}
+
+class LoadingView extends StatelessWidget {
+  const LoadingView({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CircularProgressIndicator(),
+          SizedBox(
+            height: 48,
+          ),
+          Text(
+            'Loading weather data . . .',
+            style: GoogleFonts.fredokaOne(
+              textStyle: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

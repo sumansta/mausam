@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -23,7 +24,7 @@ class TodayData extends StatelessWidget {
                 ),
               ),
               Text(
-                'Tuesday, March 31, 2020',
+                DateFormat('yyyy-MM-dd').format(DateTime.now()),
                 style: GoogleFonts.fredokaOne(
                   fontWeight: FontWeight.normal,
                 ),

@@ -1,14 +1,16 @@
 import 'dart:convert';
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-const city = 'Kathmandu';
-const apiKey = '6690a706f03dad08e43980aed12a2555';
+var apiKey = DotEnv().env['OPEN_WEATHER_MAP_API_KEY'];
 const getApi = 'https://api.openweathermap.org/data/2.5/weather';
 
 class WeatherModel {
-  Future<dynamic> getCityWeather() async {
+  Future<dynamic> getCityWeather(Position position) async {
+    double lat = position.latitude, lon = position.longitude;
     http.Response response =
-        await http.get('$getApi?q=$city&appid=$apiKey&units=metric');
+        await http.get('$getApi?lat=$lat&lon=$lon&appid=$apiKey&units=metric');
     return jsonDecode(response.body);
   }
 }
