@@ -13,7 +13,10 @@ class Mausam extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Mausam',
-      theme: ThemeData.dark().copyWith(),
+      theme: ThemeData(
+        fontFamily: 'FredokaOne',
+        brightness: Brightness.dark,
+      ),
       home: HomePage(),
     );
   }

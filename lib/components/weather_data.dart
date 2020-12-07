@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:weather_icons/weather_icons.dart';
 
 class WeatherData extends StatelessWidget {
@@ -13,7 +12,7 @@ class WeatherData extends StatelessWidget {
     return Row(
       children: <Widget>[
         DataComponent(
-          icon: WeatherIcons.thermometer_exterior,
+          icon: WeatherIcons.direction_up,
           label: 'High/Low',
           value:
               '${weatherData['main']['temp_max']}/${weatherData['main']['temp_min']}',
@@ -66,7 +65,7 @@ class DataComponent extends StatelessWidget {
             ),
             Text(
               label,
-              style: GoogleFonts.fredokaOne(
+              style: TextStyle(
                 fontWeight: FontWeight.normal,
               ),
             ),
@@ -75,7 +74,7 @@ class DataComponent extends StatelessWidget {
             ),
             Text(
               value,
-              style: GoogleFonts.fredokaOne(
+              style: TextStyle(
                 fontWeight: FontWeight.normal,
               ),
             ),

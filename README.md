@@ -2,8 +2,4 @@
 
 A Simple Weather App.
 
-## Screenshots
-
-<img src="./images/screen1.jpg" width="200">
-
-
+<img src="assets/output/mausam.gif" width="300"/>
